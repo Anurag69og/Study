@@ -1,172 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Study As Much You Can</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Font Awesome for icons (optional) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Study More As You Can</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
   <style>
-    body {
-      background: linear-gradient(135deg, #23272f 0%, #181a1b 100%);
-      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      color: #f3f4f6;
-      min-height: 100vh;
+    :root{
+      --bg-1:#0b0d10;
+      --bg-2:#111318;
+      --card-1:#1a1f27;
+      --card-2:#191d22;
+      --text:#e7eef7;
+      --muted:#a6c3de;
+      --accent:#4cc9ff;
+      --accent-2:#0ea5e9;
+      --shadow:0 10px 40px rgba(0,0,0,.35);
+      --glow:0 0 0 transparent;
     }
-    .container {
+
+    /* Global dark theme */
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color:var(--text);
+      /* MODIFIED: Removed radial-gradients for a static background */
+      background: linear-gradient(180deg, var(--bg-1), var(--bg-2));
+      background-attachment: fixed;
+      overflow-y: overlay; /* nicer scrollbars on supported browsers */
+    }
+
+    /* Subtle glassy container */
+    .container{
       max-width: 1200px;
-      margin: 40px auto;
+      margin: 48px auto; /* MODIFIED: Removed top margin, title handles spacing */
       padding: 32px;
-      background: rgba(24,26,27, 0.92);
-      border-radius: 18px;
-      box-shadow: 0 4px 32px rgba(25, 33, 46, 0.25);
-      backdrop-filter: blur(2px);
+      background: color-mix(in oklab, var(--bg-2), #0d1015 30%);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      /* REMOVED: backdrop-filter: blur(4px); */
     }
-    h1 {
+
+    /* MODIFIED: Simplified title block */
+    .title-box{
       text-align: center;
-      color: #7fd0ff;
-      font-size: 2.6rem;
-      margin-bottom: 38px;
-      font-weight: 700;
-      letter-spacing: 1.2px;
-      text-shadow: 0 2px 16px #0ea5e920;
-      animation: fadeInUp 1.2s cubic-bezier(.44,.6,.32,1.36);
+      padding: 80px 0 30px 0; /* Creates space at the top */
+      cursor: default;
+      user-select: none;
     }
-    .grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 22px;
-      justify-content: center;
-      animation: fadeIn 2s;
+    .title-box .dot{
+      display: none; /* REMOVED: Hide the dot */
     }
-    .link-card {
-      background: linear-gradient(130deg, #232b36 0%, #202125 80%);
+    .title-box h1{
+      margin: 0;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text); /* Made it brighter */
+      text-shadow: none; /* Removed glow */
+      white-space: nowrap;
+    }
+    /* REMOVED: All .title-box:hover styles */
+    /* REMOVED: @keyframes blinkGlow */
+    /* REMOVED: body.scrolling .title-box */
+
+    /* Grid of 18 oval-ish cards */
+    .grid{
+      display:flex; flex-wrap:wrap; gap:22px; justify-content:center;
+    }
+    .link-card{
+      background: linear-gradient(130deg, var(--card-1), var(--card-2) 80%);
       flex: 1 0 28%;
-      min-width: 250px;
-      max-width: 31%;
-      margin-bottom: 10px;
-      border-radius: 14px;
-      box-shadow: 0 6px 22px rgba(0, 0, 0, 0.18);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      min-width: 250px; max-width: 31%;
       padding: 28px 20px;
-      transition: transform 0.25s cubic-bezier(.21,1.12,.98,.46), 
-                  box-shadow 0.24s cubic-bezier(.21,1.12,.98,.46);
+      border-radius: 18px; /* MODIFIED: Simplified from oval corners */
+      border: 1px solid rgba(255,255,255,.06);
+      box-shadow: 0 6px 22px rgba(0,0,0,.35);
+      display:flex; align-items:center; justify-content:center;
       position: relative;
       overflow: hidden;
       cursor: pointer;
-      opacity: 0;
-      animation: cardPopIn 0.95s both;
+      opacity: 1; /* MODIFIED: Was 0 for animation */
+      transition: transform .25s ease, box-shadow .24s ease; /* MODIFIED: Simplified transition */
+      /* REMOVED: animation: cardPopIn ... */
     }
-    /* Staggered animation delays for cards */
-    .link-card:nth-child(3n+1) { animation-delay: 0.1s; }
-    .link-card:nth-child(3n+2) { animation-delay: 0.2s; }
-    .link-card:nth-child(3n)   { animation-delay: 0.3s; }
+    
+    /* REMOVED: Animation delay rules */
+    /* REMOVED: .link-card::before (sheen effect) */
 
-    .link-card::before {
-      content: '';
-      position: absolute;
-      left: -40%;
-      top: 70%;
-      width: 180%;
-      height: 120%;
-      background: linear-gradient(120deg, #42e3f3 0 20%, #0ea5e9 100%);
-      opacity: 0.12;
-      border-radius: 50% 34% 38% 68%;
-      transform: rotate(-28deg) scale(1.2);
-      pointer-events: none;
-      transition: opacity 0.2s;
+    .link-card:hover{
+      /* MODIFIED: Simplified hover effect */
+      transform: translateY(-6px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+      z-index:1;
     }
-    .link-card:hover {
-      transform: translateY(-11px) scale(1.04) rotate(-1.2deg);
-      box-shadow: 0 12px 44px #51cffe45, 0 2px 26px rgba(20,237,255,.14);
-      z-index: 2;
+    /* REMOVED: .link-card:hover::before */
+
+    .redirect-link{
+      text-decoration:none; color: var(--muted);
+      font-size: 1.12rem; font-weight: 650; letter-spacing:.4px;
+      display:flex; align-items:center; gap:12px; position:relative;
     }
-    .link-card:hover::before {
-      opacity: 0.24;
+    .link-card:hover .redirect-link{ color:#fff }
+    .card-icon{ font-size:1.25em; color:var(--accent); transition: color .2s; } /* MODIFIED: Removed transform transition */
+    .link-card:hover .card-icon{
+      /* MODIFIED: Removed transform (rotate/scale) */
+      color:#fff;
+      text-shadow: 0 2px 12px rgba(127,208,255,.5);
     }
-    .redirect-link {
-      text-decoration: none;
-      color: #b2eaff;
-      font-size: 1.18rem;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      transition: color 0.22s;
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .link-card:hover .redirect-link {
-      color: #fff;
-    }
-    .card-icon {
-      font-size: 1.3em;
-      color: #7fd0ff;
-      transition: transform 0.35s cubic-bezier(.47,1.64,.41,.8), color 0.2s;
-      will-change: transform, color;
-    }
-    .link-card:hover .card-icon {
-      transform: rotate(-15deg) scale(1.23);
-      color: #fff;
-      text-shadow: 0 2px 12px #7fd0ff70;
-    }
-    @media (max-width: 900px) {
-      .grid { gap: 14px; }
-      .container { padding: 18px 6px; }
-      .link-card { min-width: 46%; max-width: 48%; padding: 18px 10px; }
-    }
-    @media (max-width: 600px) {
-      h1 { font-size: 1.45rem; }
-      .link-card { min-width: 98%; max-width: 98%; }
-    }
-    /* Entry animations */
-    @keyframes fadeInUp {
-      0% { opacity: 0; transform: translateY(40px); }
-      100% { opacity: 1; transform: none; }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-    @keyframes cardPopIn {
-      from { opacity: 0; transform: scale(.92) translateY(30px); }
-      to   { opacity: 1; transform: none; }
-    }
+
+    /* REMOVED: @keyframes cardPopIn */
+
+    /* Responsive tweaks */
+    @media (max-width: 900px){ .container{padding:18px 10px} .link-card{ min-width:46%; max-width:48%; padding:20px 12px } }
+    @media (max-width: 600px){ .link-card{ min-width:98%; max-width:98% } .title-box{ padding: 40px 0 20px 0; } }
+
+    /* Fancy dark scrollbars (supported browsers) */
+    *{ scrollbar-width: thin; scrollbar-color: #2c3947 #0f141b }
+    *::-webkit-scrollbar{ width:10px }
+    *::-webkit-scrollbar-track{ background:#0f141b }
+    *::-webkit-scrollbar-thumb{ background:#2c3947; border-radius:10px }
+    *::-webkit-scrollbar-thumb:hover{ background:#36495c }
   </style>
 </head>
 <body>
+  <div class="title-box" id="floatingTitle" aria-live="polite">
+    <span class="dot" aria-hidden="true"></span>
+    <h1>study more as you can</h1>
+  </div>
+
   <div class="container">
-    <h1>Study As Much You Can</h1>
     <div class="grid">
-      <!-- ROW 1 -->
       <div class="link-card"><a class="redirect-link" href="https://www.coursera.org/" target="_blank"><span class="card-icon"><i class="fa-solid fa-graduation-cap"></i></span>Coursera</a></div>
       <div class="link-card"><a class="redirect-link" href="https://www.khanacademy.org/" target="_blank"><span class="card-icon"><i class="fa-solid fa-chalkboard-user"></i></span>Khan Academy</a></div>
       <div class="link-card"><a class="redirect-link" href="https://www.edx.org/" target="_blank"><span class="card-icon"><i class="fa-brands fa-researchgate"></i></span>edX</a></div>
-      <!-- ROW 2 -->
+
       <div class="link-card"><a class="redirect-link" href="https://www.udemy.com/" target="_blank"><span class="card-icon"><i class="fa-solid fa-laptop-code"></i></span>Udemy</a></div>
       <div class="link-card"><a class="redirect-link" href="https://www.futurelearn.com/" target="_blank"><span class="card-icon"><i class="fa-regular fa-lightbulb"></i></span>FutureLearn</a></div>
       <div class="link-card"><a class="redirect-link" href="https://www.skillshare.com/" target="_blank"><span class="card-icon"><i class="fa-solid fa-paint-brush"></i></span>Skillshare</a></div>
-      <!-- ROW 3 -->
+
       <div class="link-card"><a class="redirect-link" href="https://www.codecademy.com/" target="_blank"><span class="card-icon"><i class="fa-solid fa-code"></i></span>Codecademy</a></div>
       <div class="link-card"><a class="redirect-link" href="https://www.linkedin.com/learning/" target="_blank"><span class="card-icon"><i class="fa-brands fa-linkedin"></i></span>LinkedIn Learning</a></div>
       <div class="link-card"><a class="redirect-link" href="https://www.pluralsight.com/" target="_blank"><span class="card-icon"><i class="fa-solid fa-layer-group"></i></span>Pluralsight</a></div>
-      <!-- ROW 4 -->
+
       <div class="link-card"><a class="redirect-link" href="https://www.academicearth.org/" target="_blank"><span class="card-icon"><i class="fa-solid fa-globe"></i></span>Academic Earth</a></div>
       <div class="link-card"><a class="redirect-link" href="https://ocw.mit.edu/" target="_blank"><span class="card-icon"><i class="fa-solid fa-microchip"></i></span>MIT OCW</a></div>
       <div class="link-card"><a class="redirect-link" href="https://www.open.edu/openlearn/" target="_blank"><span class="card-icon"><i class="fa-solid fa-book-open"></i></span>OpenLearn</a></div>
-      <!-- ROW 5 -->
+
       <div class="link-card"><a class="redirect-link" href="https://www.saylor.org/" target="_blank"><span class="card-icon"><i class="fa-solid fa-award"></i></span>Saylor Academy</a></div>
       <div class="link-card"><a class="redirect-link" href="https://www.udacity.com/" target="_blank"><span class="card-icon"><i class="fa-solid fa-rocket"></i></span>Udacity</a></div>
       <div class="link-card"><a class="redirect-link" href="https://www.masterclass.com/" target="_blank"><span class="card-icon"><i class="fa-solid fa-clapperboard"></i></span>MasterClass</a></div>
-      <!-- ROW 6 -->
+
       <div class="link-card"><a class="redirect-link" href="https://www.alison.com/" target="_blank"><span class="card-icon"><i class="fa-solid fa-certificate"></i></span>Alison</a></div>
       <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>YouTube Education</a></div>
       <div class="link-card"><a class="redirect-link" href="https://www.wikipedia.org/" target="_blank"><span class="card-icon"><i class="fa-brands fa-wikipedia-w"></i></span>Wikipedia</a></div>
     </div>
   </div>
-</body>
+
+  </body>
 </html>
