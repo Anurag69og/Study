@@ -13,8 +13,8 @@
       --card-2:#191d22;
       --text:#e7eef7;
       --muted:#a6c3de;
-      --accent:#4cc9ff;
-      --accent-2:#0ea5e9;
+      --accent:#ff0000; /* MODIFIED: YouTube Red */
+      --accent-2:#cc0000; /* MODIFIED: Darker YouTube Red */
       --shadow:0 10px 40px rgba(0,0,0,.35);
       --glow:0 0 0 transparent;
     }
@@ -25,7 +25,6 @@
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
       color:var(--text);
-      /* MODIFIED: Removed radial-gradients for a static background */
       background: linear-gradient(180deg, var(--bg-1), var(--bg-2));
       background-attachment: fixed;
       overflow-y: overlay; /* nicer scrollbars on supported browsers */
@@ -34,36 +33,32 @@
     /* Subtle glassy container */
     .container{
       max-width: 1200px;
-      margin: 48px auto; /* MODIFIED: Removed top margin, title handles spacing */
+      margin: 48px auto;
       padding: 32px;
       background: color-mix(in oklab, var(--bg-2), #0d1015 30%);
       border: 1px solid rgba(255,255,255,.06);
       border-radius: 20px;
       box-shadow: var(--shadow);
-      /* REMOVED: backdrop-filter: blur(4px); */
     }
 
     /* MODIFIED: Simplified title block */
     .title-box{
       text-align: center;
-      padding: 80px 0 30px 0; /* Creates space at the top */
+      padding: 80px 0 30px 0;
       cursor: default;
       user-select: none;
     }
     .title-box .dot{
-      display: none; /* REMOVED: Hide the dot */
+      display: none;
     }
     .title-box h1{
       margin: 0;
       font-size: 2.2rem;
       font-weight: 800;
-      color: var(--text); /* Made it brighter */
-      text-shadow: none; /* Removed glow */
+      color: var(--text);
+      text-shadow: none;
       white-space: nowrap;
     }
-    /* REMOVED: All .title-box:hover styles */
-    /* REMOVED: @keyframes blinkGlow */
-    /* REMOVED: body.scrolling .title-box */
 
     /* Grid of 18 oval-ish cards */
     .grid{
@@ -74,28 +69,22 @@
       flex: 1 0 28%;
       min-width: 250px; max-width: 31%;
       padding: 28px 20px;
-      border-radius: 18px; /* MODIFIED: Simplified from oval corners */
+      border-radius: 18px;
       border: 1px solid rgba(255,255,255,.06);
       box-shadow: 0 6px 22px rgba(0,0,0,.35);
       display:flex; align-items:center; justify-content:center;
       position: relative;
       overflow: hidden;
       cursor: pointer;
-      opacity: 1; /* MODIFIED: Was 0 for animation */
-      transition: transform .25s ease, box-shadow .24s ease; /* MODIFIED: Simplified transition */
-      /* REMOVED: animation: cardPopIn ... */
+      opacity: 1;
+      transition: transform .25s ease, box-shadow .24s ease;
     }
     
-    /* REMOVED: Animation delay rules */
-    /* REMOVED: .link-card::before (sheen effect) */
-
     .link-card:hover{
-      /* MODIFIED: Simplified hover effect */
       transform: translateY(-6px);
       box-shadow: 0 10px 30px rgba(0,0,0,.4);
       z-index:1;
     }
-    /* REMOVED: .link-card:hover::before */
 
     .redirect-link{
       text-decoration:none; color: var(--muted);
@@ -103,14 +92,11 @@
       display:flex; align-items:center; gap:12px; position:relative;
     }
     .link-card:hover .redirect-link{ color:#fff }
-    .card-icon{ font-size:1.25em; color:var(--accent); transition: color .2s; } /* MODIFIED: Removed transform transition */
+    .card-icon{ font-size:1.25em; color:var(--accent); transition: color .2s; }
     .link-card:hover .card-icon{
-      /* MODIFIED: Removed transform (rotate/scale) */
-      color:#fff;
-      text-shadow: 0 2px 12px rgba(127,208,255,.5);
+      color:var(--accent); /* MODIFIED: Kept accent color for icon hover */
+      text-shadow: 0 2px 12px rgba(255,0,0,.5); /* MODIFIED: Red glow */
     }
-
-    /* REMOVED: @keyframes cardPopIn */
 
     /* Responsive tweaks */
     @media (max-width: 900px){ .container{padding:18px 10px} .link-card{ min-width:46%; max-width:48%; padding:20px 12px } }
@@ -126,35 +112,34 @@
 </head>
 <body>
   <div class="title-box" id="floatingTitle" aria-live="polite">
-    <span class="dot" aria-hidden="true"></span>
     <h1>study more as you can</h1>
   </div>
 
   <div class="container">
     <div class="grid">
-      <div class="link-card"><a class="redirect-link" href="https://www.coursera.org/" target="_blank"><span class="card-icon"><i class="fa-solid fa-graduation-cap"></i></span>Coursera</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.khanacademy.org/" target="_blank"><span class="card-icon"><i class="fa-solid fa-chalkboard-user"></i></span>Khan Academy</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.edx.org/" target="_blank"><span class="card-icon"><i class="fa-brands fa-researchgate"></i></span>edX</a></div>
-
-      <div class="link-card"><a class="redirect-link" href="https://www.udemy.com/" target="_blank"><span class="card-icon"><i class="fa-solid fa-laptop-code"></i></span>Udemy</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.futurelearn.com/" target="_blank"><span class="card-icon"><i class="fa-regular fa-lightbulb"></i></span>FutureLearn</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.skillshare.com/" target="_blank"><span class="card-icon"><i class="fa-solid fa-paint-brush"></i></span>Skillshare</a></div>
-
-      <div class="link-card"><a class="redirect-link" href="https://www.codecademy.com/" target="_blank"><span class="card-icon"><i class="fa-solid fa-code"></i></span>Codecademy</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.linkedin.com/learning/" target="_blank"><span class="card-icon"><i class="fa-brands fa-linkedin"></i></span>LinkedIn Learning</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.pluralsight.com/" target="_blank"><span class="card-icon"><i class="fa-solid fa-layer-group"></i></span>Pluralsight</a></div>
-
-      <div class="link-card"><a class="redirect-link" href="https://www.academicearth.org/" target="_blank"><span class="card-icon"><i class="fa-solid fa-globe"></i></span>Academic Earth</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://ocw.mit.edu/" target="_blank"><span class="card-icon"><i class="fa-solid fa-microchip"></i></span>MIT OCW</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.open.edu/openlearn/" target="_blank"><span class="card-icon"><i class="fa-solid fa-book-open"></i></span>OpenLearn</a></div>
-
-      <div class="link-card"><a class="redirect-link" href="https://www.saylor.org/" target="_blank"><span class="card-icon"><i class="fa-solid fa-award"></i></span>Saylor Academy</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.udacity.com/" target="_blank"><span class="card-icon"><i class="fa-solid fa-rocket"></i></span>Udacity</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.masterclass.com/" target="_blank"><span class="card-icon"><i class="fa-solid fa-clapperboard"></i></span>MasterClass</a></div>
-
-      <div class="link-card"><a class="redirect-link" href="https://www.alison.com/" target="_blank"><span class="card-icon"><i class="fa-solid fa-certificate"></i></span>Alison</a></div>
       <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>YouTube Education</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.wikipedia.org/" target="_blank"><span class="card-icon"><i class="fa-brands fa-wikipedia-w"></i></span>Wikipedia</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>YouTube Education</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>YouTube Education</a></div>
+
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>YouTube Education</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>YouTube Education</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>YouTube Education</a></div>
+
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>YouTube Education</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>YouTube Education</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>YouTube Education</a></div>
+
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>YouTube Education</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>YouTube Education</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>YouTube Education</a></div>
+
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>YouTube Education</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>YouTube Education</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>YouTube Education</a></div>
+
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>YouTube Education</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>YouTube Education</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>YouTube Education</a></div>
     </div>
   </div>
 
