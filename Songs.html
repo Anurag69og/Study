@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>YouTube Songs — Grey Harmony (100)</title>
+  <title>YouTube Songs — Grey Harmony (Manual Links)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Space+Grotesk:wght@600&display=swap" rel="stylesheet">
@@ -28,7 +28,7 @@
     }
 
     .page{
-      max-width:1100px;
+      width:95%;
       margin:auto;
       background: var(--panel);
       border-radius:16px;
@@ -37,7 +37,6 @@
       border:1px solid rgba(255,255,255,0.05);
     }
 
-    /* Restored YouTube logo (red) */
     .yt-logo-wrap{display:flex;justify-content:center;align-items:center;margin-bottom:12px;}
     .yt-logo{display:flex;align-items:center;gap:10px;background:#202123;padding:10px 16px;border-radius:10px;box-shadow:0 4px 10px rgba(255,0,0,0.3);}
     .yt-logo i{color:var(--yt-red);font-size:1.5rem;}
@@ -73,7 +72,6 @@
       background:#2e2f31;
       box-shadow:inset 0 0 8px rgba(255,255,255,0.08);
     }
-    /* B&W logo for song cards */
     .thumb i{
       color:#fff;font-size:1.4rem;filter:grayscale(100%) brightness(150%);
     }
@@ -94,85 +92,38 @@
     </div>
 
     <div class="header">
-      <a href="#" class="home-btn" href="index.html" title="Home"><i class="fa-solid fa-house"></i> Home</a>
+      <a href="https://gdu.com" class="home-btn" title="Home"><i class="fa-solid fa-house"></i> Home</a>
 
       <div class="title-area">
         <div class="logo">YT</div>
         <div>
-          <h1>YouTube Songs — Grey Harmony (100)</h1>
-          <p>Hindi trending, lofi & reverb — uniform grey background, B&W song logos</p>
+          <h1>YouTube Songs — Grey Harmony (Manual Links)</h1>
+          <p>100 manually editable cards with uniform grey style</p>
         </div>
       </div>
 
       <div class="controls">
-        <div class="search"><i class="fa-solid fa-magnifying-glass" style="opacity:.6"></i><input id="searchInput" placeholder="Search (e.g. hindi, lofi)..." /></div>
-        <button class="chip active" data-filter="all">All</button>
-        <button class="chip" data-filter="hindi">Hindi</button>
-        <button class="chip" data-filter="lofi">Lofi</button>
+        <div class="search"><i class="fa-solid fa-magnifying-glass" style="opacity:.6"></i><input id="searchInput" placeholder="Search songs..." /></div>
       </div>
     </div>
 
-    <div id="grid" class="grid" aria-live="polite"></div>
-    <div class="footer-note">Tip: press <kbd>/</kbd> to focus search. Click a card to open YouTube.</div>
+    <div id="grid" class="grid" aria-live="polite">
+      <!-- MANUAL SONG LINKS BELOW -->
+      <a href="https://www.youtube.com/watch?v=zCUtF6Ts0is" target="_blank" class="card"><div class="thumb"><i class="fa-solid fa-music"></i></div><div class="meta"><div class="name">Song 1</div></div><div class="badge">Hindi</div></a>
+      <a href="https://www.youtube.com/watch?v=b5Wu9ypTKqM" target="_blank" class="card"><div class="thumb"><i class="fa-solid fa-music"></i></div><div class="meta"><div class="name">Song 2</div></div><div class="badge">Hindi</div></a>
+      <a href="https://www.youtube.com/watch?v=s_WCm5PMzmk" target="_blank" class="card"><div class="thumb"><i class="fa-solid fa-music"></i></div><div class="meta"><div class="name">Song 3</div></div><div class="badge">Lofi</div></a>
+      <a href="https://www.youtube.com/watch?v=55c6IlV7BEo" target="_blank" class="card"><div class="thumb"><i class="fa-solid fa-music"></i></div><div class="meta"><div class="name">Song 4</div></div><div class="badge">Hindi</div></a>
+      <a href="https://www.youtube.com/watch?v=eYSaHXXFIBU" target="_blank" class="card"><div class="thumb"><i class="fa-solid fa-music"></i></div><div class="meta"><div class="name">Song 5</div></div><div class="badge">Reverb</div></a>
+      <a href="https://www.youtube.com/watch?v=mt-5ZbKqiDc" target="_blank" class="card"><div class="thumb"><i class="fa-solid fa-music"></i></div><div class="meta"><div class="name">Song 6</div></div><div class="badge">Lofi</div></a>
+
+      <!-- PLACEHOLDER LINKS (replace manually) -->
+      <!-- Copy below block and replace href with your own YouTube URLs -->
+      <a href="https://www.youtube.com/watch?v=NSNaj8rlpzk" target="_blank" class="card"><div class="thumb"><i class="fa-solid fa-music"></i></div><div class="meta"><div class="name">Song 7</div></div><div class="badge">Music</div></a>
+      <a href="https://www.youtube.com/watch?v=NSNaj8rlpzk" target="_blank" class="card"><div class="thumb"><i class="fa-solid fa-music"></i></div><div class="meta"><div class="name">Song 8</div></div><div class="badge">Music</div></a>
+      <!-- Continue adding up to Song 100 manually -->
+    </div>
+
+    <div class="footer-note">You can replace each song link manually above. Every card uses editable HTML.</div>
   </div>
-
-  <script>
-    const provided = [
-      { title: 'Provided 1', url: 'https://www.youtube.com/watch?v=zCUtF6Ts0is', tag: 'Hindi' },
-      { title: 'Provided 2', url: 'https://www.youtube.com/watch?v=b5Wu9ypTKqM', tag: 'Hindi' },
-      { title: 'Provided 3', url: 'https://www.youtube.com/watch?v=s_WCm5PMzmk', tag: 'Lofi' },
-      { title: 'Provided 4', url: 'https://www.youtube.com/watch?v=55c6IlV7BEo', tag: 'Hindi' },
-      { title: 'Provided 5', url: 'https://www.youtube.com/watch?v=eYSaHXXFIBU', tag: 'Reverb' },
-      { title: 'Provided 6', url: 'https://www.youtube.com/watch?v=mt-5ZbKqiDc', tag: 'Lofi' }
-    ];
-
-    const songs = [...provided];
-
-    function makeSearchLink(query){ return 'https://www.youtube.com/results?search_query=' + encodeURIComponent(query); }
-
-    const hindiSeeds = ['arijit new', 'neha kakkar hit', 'bollywood song', 'indie hindi', 'romantic hindi', 'sad hindi', 'party hindi'];
-    const lofiSeeds = ['lofi chill', 'study lofi', 'lofi rain', 'late night lofi', 'anime lofi'];
-    const reverbSeeds = ['reverb mix', 'ambient reverb', 'dreamy reverb'];
-
-    while(songs.length < 100){
-      const type = (songs.length % 3 === 0) ? 'Lofi' : (songs.length % 3 === 1) ? 'Hindi' : 'Reverb';
-      let seed;
-      if(type === 'Hindi') seed = hindiSeeds[Math.floor(Math.random()*hindiSeeds.length)] + ' ' + (Math.floor(Math.random()*100)+1);
-      if(type === 'Lofi') seed = lofiSeeds[Math.floor(Math.random()*lofiSeeds.length)] + ' ' + (Math.floor(Math.random()*80)+1);
-      if(type === 'Reverb') seed = reverbSeeds[Math.floor(Math.random()*reverbSeeds.length)] + ' ' + (Math.floor(Math.random()*40)+1);
-      songs.push({ title: `${type} • ${seed}`, url: makeSearchLink(seed), tag: type });
-    }
-
-    const grid = document.getElementById('grid');
-    function createCard(s, i){
-      const a = document.createElement('a'); a.className='card'; a.href=s.url; a.target='_blank'; a.rel='noopener noreferrer';
-      const thumb = document.createElement('div'); thumb.className='thumb'; thumb.innerHTML='<i class="fa-solid fa-music"></i>';
-      const meta = document.createElement('div'); meta.className='meta';
-      const name = document.createElement('div'); name.className='name'; name.textContent=`${i+1}. ${s.title}`;
-      const badge = document.createElement('div'); badge.className='badge'; badge.textContent=s.tag;
-      meta.appendChild(name);
-      a.appendChild(thumb); a.appendChild(meta); a.appendChild(badge);
-      return a;
-    }
-
-    function render(list){ grid.innerHTML=''; list.forEach((s,i)=>grid.appendChild(createCard(s,i))); }
-    render(songs);
-
-    const input=document.getElementById('searchInput');
-    const chips=Array.from(document.querySelectorAll('.chip'));
-    function applyFilter(){
-      const q=(input.value||'').trim().toLowerCase();
-      const active=document.querySelector('.chip.active')?.dataset.filter||'all';
-      const filtered=songs.filter(s=>{
-        const matchQ=q===''||(s.title+' '+s.tag).toLowerCase().includes(q);
-        const matchChip=active==='all'||s.tag.toLowerCase()===active.toLowerCase();
-        return matchQ&&matchChip;
-      });
-      render(filtered);
-    }
-    input.addEventListener('input',applyFilter);
-    chips.forEach(c=>c.addEventListener('click',()=>{chips.forEach(x=>x.classList.remove('active'));c.classList.add('active');applyFilter();}));
-    document.addEventListener('keydown',e=>{if(e.key==='/'&&document.activeElement!==input){e.preventDefault();input.focus();}});
-  </script>
 </body>
 </html>
