@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Study More As You Can</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
   <style>
     :root{
       --bg-1:#0b0d10;
@@ -71,10 +70,10 @@
       letter-spacing: 1px;
     }
 
-    /* three-dot button */
+    /* three-dot and menu button position (left side now) */
     .three-dot-wrap{
       position: absolute;
-      right: 24px;
+      left: 24px;
       top: 18px;
       display:flex;
       align-items:center;
@@ -94,7 +93,7 @@
     }
     .dot-btn:hover{ color: #fff; border-color: rgba(255,255,255,0.08) }
 
-    /* visible sidebar toggle button */
+    /* visible sidebar toggle button (hamburger text) */
     .open-sidebar {
       background: linear-gradient(180deg,var(--accent-2),var(--accent));
       border: none;
@@ -107,12 +106,13 @@
       display:inline-flex;
       gap:8px;
       align-items:center;
+      font-size:14px;
     }
 
     /* dropdown */
     .dropdown{
       position: absolute;
-      right: 0;
+      left: 0;
       top: calc(100% + 12px);
       width: 200px;
       background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
@@ -135,7 +135,7 @@
     .dropdown a:last-child{ border-bottom: none }
     .dropdown a:hover{ background: rgba(255,255,255,0.02); color:#fff }
 
-    /* Grid of 18 oval-ish cards */
+    /* Grid of cards */
     .grid{
       display:flex; flex-wrap:wrap; gap:22px; justify-content:center;
     }
@@ -165,28 +165,23 @@
       display:flex; align-items:center; gap:12px; position:relative;
     }
     .link-card:hover .redirect-link{ color:#fff }
-    .card-icon{ font-size:1.25em; color:var(--accent); transition: color .2s; }
-    .link-card:hover .card-icon{
-      color:var(--accent);
-      text-shadow: 0 2px 12px rgba(255,0,0,.35);
-    }
 
-    /* Sidebar panel (sliding) */
+    /* Sidebar panel (left side) */
     .sidebar {
       position: fixed;
       top: 0;
-      right: -340px; /* hidden by default on right */
+      left: -340px; /* hidden by default on left */
       width: 320px;
       height: 100%;
       background: linear-gradient(180deg, rgba(17,19,22,0.98), rgba(10,12,15,0.98));
-      border-left: 1px solid rgba(255,255,255,0.03);
-      box-shadow: -8px 0 40px rgba(0,0,0,0.6);
-      transition: right 300ms cubic-bezier(.2,.9,.2,1);
+      border-right: 1px solid rgba(255,255,255,0.03);
+      box-shadow: 8px 0 40px rgba(0,0,0,0.6);
+      transition: left 300ms cubic-bezier(.2,.9,.2,1);
       padding: 22px;
       z-index: 60;
       overflow-y:auto;
     }
-    .sidebar.open { right: 0 }
+    .sidebar.open { left: 0 }
 
     .sidebar h3 { margin: 0 0 12px 0; color: var(--accent); text-align:center; font-size:18px }
 
@@ -213,8 +208,8 @@
     .overlay.show { display:block }
 
     /* Responsive tweaks */
-    @media (max-width: 900px){ .container{padding:18px 10px} .link-card{ min-width:46%; max-width:48%; padding:20px 12px } .three-dot-wrap{ right:12px } .title-box h1{ font-size:1.8rem } }
-    @media (max-width: 600px){ .link-card{ min-width:98%; max-width:98% } .title-box{ padding: 28px 10px 6px 10px; } .sidebar{ width:86%; right:-100% } .sidebar.open{ right:0 } }
+    @media (max-width: 900px){ .container{padding:18px 10px} .link-card{ min-width:46%; max-width:48%; padding:20px 12px } .three-dot-wrap{ left:12px } .title-box h1{ font-size:1.8rem } }
+    @media (max-width: 600px){ .link-card{ min-width:98%; max-width:98% } .title-box{ padding: 28px 10px 6px 10px; } .sidebar{ width:86%; left:-100% } .sidebar.open{ left:0 } }
     *{ scrollbar-width: thin; scrollbar-color: #2c3947 #0f141b }
     *::-webkit-scrollbar{ width:10px } *::-webkit-scrollbar-track{ background:#0f141b } *::-webkit-scrollbar-thumb{ background:#2c3947; border-radius:10px } *::-webkit-scrollbar-thumb:hover{ background:#36495c }
   </style>
@@ -223,9 +218,9 @@
   <div class="title-box" id="floatingTitle" aria-live="polite">
     <h1>STUDY MORE AS YOU CAN</h1>
 
-    <!-- three-dot and open-sidebar controls -->
+    <!-- three-dot and open-sidebar controls (left side) -->
     <div class="three-dot-wrap" aria-hidden="false">
-      <button id="openSidebarBtn" class="open-sidebar" title="Open sidebar"><i class="fa-solid fa-bars"></i> <span style="font-size:13px">MENU</span></button>
+      <button id="openSidebarBtn" class="open-sidebar" title="Open sidebar">☰ <span style="font-size:13px">MENU</span></button>
 
       <button id="threeDotBtn" class="dot-btn" aria-expanded="false" aria-controls="threeDotDropdown" title="More options">⋮</button>
 
@@ -239,29 +234,29 @@
 
   <div class="container" id="grid">
     <div class="grid">
-      <div class="link-card"><a class="redirect-link" href="https://youtube.com/playlist?list=PLPDwEzd9zZzDVTZ9n7vz56psssUHQn3aw" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>CA Nishant Tax & Gst</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://youtube.com/playlist?list=PLELk3kAcynz7KmaoxPVTKYVGxjmDzx-iv" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>BBSir Tax</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/watch?v=RPGfW2Q6VD0" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>CA Amit Mahajan GST Marathon</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://youtube.com/playlist?list=PLPDwEzd9zZzDVTZ9n7vz56psssUHQn3aw" target="_blank">CA Nishant Tax & Gst</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://youtube.com/playlist?list=PLELk3kAcynz7KmaoxPVTKYVGxjmDzx-iv" target="_blank">BBSir Tax</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/watch?v=RPGfW2Q6VD0" target="_blank">CA Amit Mahajan GST Marathon</a></div>
 
-      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/playlist?list=PLL_LKXPxsGy0bp5MiOE9sSTH8usFjDNO7" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>LAW CAPSULE REVISION</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/watch?v=G1lQuQxyuys" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>LLP & Other Laws</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/watch?v=EAWOOw8XcO0" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>Corporate Laws</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/playlist?list=PLL_LKXPxsGy0bp5MiOE9sSTH8usFjDNO7" target="_blank">LAW CAPSULE REVISION</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/watch?v=G1lQuQxyuys" target="_blank">LLP & Other Laws</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/watch?v=EAWOOw8XcO0" target="_blank">Corporate Laws</a></div>
 
-      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/playlist?list=PLL_LKXPxsGy0HtMkXzdnb6RClI1LJ8Z_q" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>AUDIT CAPSULE REVISION</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/watch?v=B-tBN8Iv91w" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>Audit Marathon Chapters</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/watch?v=SezMYCmYtQs" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>SA Audit Marathon</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/playlist?list=PLL_LKXPxsGy0HtMkXzdnb6RClI1LJ8Z_q" target="_blank">AUDIT CAPSULE REVISION</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/watch?v=B-tBN8Iv91w" target="_blank">Audit Marathon Chapters</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/watch?v=SezMYCmYtQs" target="_blank">SA Audit Marathon</a></div>
 
-      <div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/117" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>Costing</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>Coming Soon......</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>Coming Soon......</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/117" target="_blank">Costing</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank">Coming Soon......</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank">Coming Soon......</a></div>
 
-      <div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/5/159" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>Financial Management</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>Coming Soon......</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>Coming Soon......</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/5/159" target="_blank">Financial Management</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank">Coming Soon......</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank">Coming Soon......</a></div>
 
-      <div class="link-card"><a class="redirect-link" href="https://youtube.com/playlist?list=PLsEeV2cKmTt5xwh_UEjR-F3m3e6mQF056" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>SM Marathon</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>Coming Soon......</a></div>
-      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank"><span class="card-icon"><i class="fa-brands fa-youtube"></i></span>Coming Soon......</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://youtube.com/playlist?list=PLsEeV2cKmTt5xwh_UEjR-F3m3e6mQF056" target="_blank">SM Marathon</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank">Coming Soon......</a></div>
+      <div class="link-card"><a class="redirect-link" href="https://www.youtube.com/education" target="_blank">Coming Soon......</a></div>
     </div>
   </div>
 
@@ -269,20 +264,20 @@
   <aside id="sidebar" class="sidebar" aria-hidden="true" aria-label="Quick links">
     <h3>Quick Links</h3>
 
-    <div class="s-block"><span style="width:34px;text-align:center"><i class="fa-brands fa-youtube" style="color:var(--accent)"></i></span><a href="https://youtube.com/playlist?list=PLPDwEzd9zZzDVTZ9n7vz56psssUHQn3aw" target="_blank">CA Nishant Tax & Gst</a></div>
-    <div class="s-block"><span style="width:34px;text-align:center"><i class="fa-brands fa-youtube" style="color:var(--accent)"></i></span><a href="https://youtube.com/playlist?list=PLELk3kAcynz7KmaoxPVTKYVGxjmDzx-iv" target="_blank">BBSir Tax</a></div>
-    <div class="s-block"><span style="width:34px;text-align:center"><i class="fa-brands fa-youtube" style="color:var(--accent)"></i></span><a href="https://www.youtube.com/watch?v=RPGfW2Q6VD0" target="_blank">CA Amit Mahajan GST Marathon</a></div>
-    <div class="s-block"><span style="width:34px;text-align:center"><i class="fa-solid fa-gavel" style="color:var(--accent)"></i></span><a href="https://www.youtube.com/playlist?list=PLL_LKXPxsGy0bp5MiOE9sSTH8usFjDNO7" target="_blank">LAW CAPSULE REVISION</a></div>
+    <div class="s-block"><a href="https://youtube.com/playlist?list=PLPDwEzd9zZzDVTZ9n7vz56psssUHQn3aw" target="_blank">CA Nishant Tax & Gst</a></div>
+    <div class="s-block"><a href="https://youtube.com/playlist?list=PLELk3kAcynz7KmaoxPVTKYVGxjmDzx-iv" target="_blank">BBSir Tax</a></div>
+    <div class="s-block"><a href="https://www.youtube.com/watch?v=RPGfW2Q6VD0" target="_blank">CA Amit Mahajan GST Marathon</a></div>
+    <div class="s-block"><a href="https://www.youtube.com/playlist?list=PLL_LKXPxsGy0bp5MiOE9sSTH8usFjDNO7" target="_blank">LAW CAPSULE REVISION</a></div>
 
-    <div class="s-block"><span style="width:34px;text-align:center"><i class="fa-solid fa-building-columns" style="color:var(--accent)"></i></span><a href="https://www.youtube.com/watch?v=EAWOOw8XcO0" target="_blank">Corporate Laws</a></div>
-    <div class="s-block"><span style="width:34px;text-align:center"><i class="fa-solid fa-clipboard-check" style="color:var(--accent)"></i></span><a href="https://www.youtube.com/playlist?list=PLL_LKXPxsGy0HtMkXzdnb6RClI1LJ8Z_q" target="_blank">AUDIT CAPSULE REVISION</a></div>
-    <div class="s-block"><span style="width:34px;text-align:center"><i class="fa-solid fa-calculator" style="color:var(--accent)"></i></span><a href="https://t.me/c/2718816646/3/117" target="_blank">Costing</a></div>
-    <div class="s-block"><span style="width:34px;text-align:center"><i class="fa-solid fa-chart-line" style="color:var(--accent)"></i></span><a href="https://t.me/c/2718816646/5/159" target="_blank">Financial Management</a></div>
+    <div class="s-block"><a href="https://www.youtube.com/watch?v=EAWOOw8XcO0" target="_blank">Corporate Laws</a></div>
+    <div class="s-block"><a href="https://www.youtube.com/playlist?list=PLL_LKXPxsGy0HtMkXzdnb6RClI1LJ8Z_q" target="_blank">AUDIT CAPSULE REVISION</a></div>
+    <div class="s-block"><a href="https://t.me/c/2718816646/3/117" target="_blank">Costing</a></div>
+    <div class="s-block"><a href="https://t.me/c/2718816646/5/159" target="_blank">Financial Management</a></div>
 
-    <div class="s-block"><span style="width:34px;text-align:center"><i class="fa-solid fa-clock" style="color:var(--accent)"></i></span><a href="https://www.youtube.com/education" target="_blank">Coming Soon - 1</a></div>
-    <div class="s-block"><span style="width:34px;text-align:center"><i class="fa-solid fa-clock" style="color:var(--accent)"></i></span><a href="https://www.youtube.com/education" target="_blank">Coming Soon - 2</a></div>
-    <div class="s-block"><span style="width:34px;text-align:center"><i class="fa-solid fa-clock" style="color:var(--accent)"></i></span><a href="https://www.youtube.com/education" target="_blank">Coming Soon - 3</a></div>
-    <div class="s-block"><span style="width:34px;text-align:center"><i class="fa-solid fa-clapperboard" style="color:var(--accent)"></i></span><a href="https://youtube.com/playlist?list=PLsEeV2cKmTt5xwh_UEjR-F3m3e6mQF056" target="_blank">SM Marathon</a></div>
+    <div class="s-block"><a href="https://www.youtube.com/education" target="_blank">Coming Soon - 1</a></div>
+    <div class="s-block"><a href="https://www.youtube.com/education" target="_blank">Coming Soon - 2</a></div>
+    <div class="s-block"><a href="https://www.youtube.com/education" target="_blank">Coming Soon - 3</a></div>
+    <div class="s-block"><a href="https://youtube.com/playlist?list=PLsEeV2cKmTt5xwh_UEjR-F3m3e6mQF056" target="_blank">SM Marathon</a></div>
   </aside>
 
   <div id="overlay" class="overlay" tabindex="-1" aria-hidden="true"></div>
@@ -307,7 +302,7 @@
       }
     });
 
-    // sidebar open/close
+    // sidebar open/close (left side)
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
     const openSidebarBtn = document.getElementById('openSidebarBtn');
@@ -345,49 +340,26 @@
       card.addEventListener('click', (e) => {
         const a = card.querySelector('a.redirect-link');
         if (a && e.target.tagName.toLowerCase() !== 'a' && !a.contains(e.target)) {
-          // open link in new tab (same behavior as target="_blank")
           window.open(a.href, '_blank');
         }
       });
     });
 
-    /* ---------- AUTO-OPEN SIDEBAR ON PAGE LOAD ---------- */
-    // Automatically open the sidebar once DOM is ready.
-    // If you'd prefer a delay, adjust the timeout (ms). Set to 0 for immediate.
-    document.addEventListener('DOMContentLoaded', () => {
-      try {
-        // Open immediately (0ms). If you want a short delay, change to e.g. 500
-        const delayMs = 0;
-        setTimeout(() => {
-          openSidebar();
-        }, delayMs);
-      } catch (err) {
-        // fail silently if any error
-        console.error(err);
-      }
-    });
-
     /* ---------- AUTO-HIDE TITLE ON SCROLL ---------- */
-    // Hide the title when scrolling down; show when scrolling up.
     (function(){
       const title = document.getElementById('floatingTitle');
       let lastScroll = window.scrollY;
       let ticking = false;
-      // threshold (px) before hiding to avoid twitchy behavior on tiny scrolls
       const THRESHOLD = 30;
 
       function onScroll() {
         const current = window.scrollY;
         const delta = current - lastScroll;
-
-        // only react to meaningful scrolls
         if (Math.abs(delta) < 8) return;
 
         if (current > lastScroll && current > THRESHOLD) {
-          // scrolling down -> hide
           if (!title.classList.contains('title-hidden')) title.classList.add('title-hidden');
         } else {
-          // scrolling up -> show
           if (title.classList.contains('title-hidden')) title.classList.remove('title-hidden');
         }
         lastScroll = current <= 0 ? 0 : current;
