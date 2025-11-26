@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Study More As You Can</title>
+  <style>
+    :root{
+      --bg-1:#0b0d10;
+      --bg-2:#111318;
+      --card-1:#1a1f27;
+      --card-2:#191d22;
+      --text:#e7eef7;
+      --muted:#a6c3de;
+      --accent:#ff0000; /* YouTube Red */
+      --accent-2:#cc0000;
+      --shadow:0 10px 40px rgba(0,0,0,.35);
+    }
+
+    /* Global dark theme */
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", Arial;
+      color:var(--text);
+      background: linear-gradient(180deg, var(--bg-1), var(--bg-2));
+      background-attachment: fixed;
+      overflow-y: overlay;
+    }
+
+    /* Subtle glassy container */
+    .container{
+      max-width: 1200px;
+      margin: 48px auto;
+      padding: 32px;
+      background: color-mix(in oklab, var(--bg-2), #0d1015 30%);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Title block with three-dot and sidebar button */
+    .title-box{
+      text-align: center;
+      padding: 48px 20px 8px 20px;
+      cursor: default;
+      user-select: none;
+      position: relative;
+      margin-bottom: 18px;
+      transition: transform .36s cubic-bezier(.2,.9,.2,1), opacity .36s ease;
+      will-change: transform, opacity;
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+      backdrop-filter: blur(4px);
+    }
+    /* hidden state (when scrolled down) */
+    .title-box.title-hidden{
+      transform: translateY(-120%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .title-box h1{
+      margin: 0;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text);
+      white-space: nowrap;
+      letter-spacing: 1px;
+    }
+
+    /* three-dot and menu button position (left side now) */
+    .three-dot-wrap{
+      position: absolute;
+      left: 24px;
+      top: 18px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .dot-btn{
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.04);
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 20px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .dot-btn:hover{ color: #fff; border-color: rgba(255,255,255,0.08) }
+
+    /* visible sidebar toggle button (hamburger text) */
+    .open-sidebar {
+      background: linear-gradient(180deg,var(--accent-2),var(--accent));
+      border: none;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      font-size:14px;
+    }
+
+    /* dropdown */
+    .dropdown{
+      position: absolute;
+      left: 0;
+      top: calc(100% + 12px);
+      width: 200px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.04);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+      display:none;
+      flex-direction: column;
+      overflow:hidden;
+      z-index: 50;
+    }
+    .dropdown a{
+      padding:10px 12px;
+      text-decoration:none;
+      color:var(--muted);
+      font-weight:600;
+      border-bottom:1px solid rgba(255,255,255,0.02);
+      display:flex; align-items:center; gap:10px;
+    }
+    .dropdown a:last-child{ border-bottom: none }
+    .dropdown a:hover{ background: rgba(255,255,255,0.02); color:#fff }
+
+    /* Grid of cards */
+    .grid{
+      display:flex; flex-wrap:wrap; gap:22px; justify-content:center;
+    }
+    .link-card{
+      background: linear-gradient(130deg, var(--card-1), var(--card-2) 80%);
+      flex: 1 0 28%;
+      min-width: 250px; max-width: 31%;
+      padding: 28px 20px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.06);
+      box-shadow: 0 6px 22px rgba(0,0,0,.35);
+      display:flex; align-items:center; justify-content:center;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .25s ease, box-shadow .24s ease;
+    }
+    .link-card:hover{
+      transform: translateY(-6px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+      z-index:1;
+    }
+
+    .redirect-link{
+      text-decoration:none; color: var(--muted);
+      font-size: 1.12rem; font-weight: 650; letter-spacing:.4px;
+      display:flex; align-items:center; gap:12px; position:relative;
+    }
+    .link-card:hover .redirect-link{ color:#fff }
+
+    /* Sidebar panel (left side) */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -340px; /* hidden by default on left */
+      width: 320px;
+      height: 100%;
+      background: linear-gradient(180deg, rgba(17,19,22,0.98), rgba(10,12,15,0.98));
+      border-right: 1px solid rgba(255,255,255,0.03);
+      box-shadow: 8px 0 40px rgba(0,0,0,0.6);
+      transition: left 300ms cubic-bezier(.2,.9,.2,1);
+      padding: 22px;
+      z-index: 60;
+      overflow-y:auto;
+    }
+    .sidebar.open { left: 0 }
+
+    .sidebar h3 { margin: 0 0 12px 0; color: var(--accent); text-align:center; font-size:18px }
+
+    .s-block {
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.006));
+      padding: 12px 10px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      border: 1px solid rgba(255,255,255,0.02);
+      display:flex; align-items:center; gap:10px;
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+    .s-block a{ text-decoration:none; color:var(--muted); font-weight:700; display:block; width:100% }
+    .s-block:hover{ transform: translateY(-4px); box-shadow: 0 8px 22px rgba(0,0,0,0.5); color:#fff }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      z-index: 55;
+    }
+    .overlay.show { display:block }
+
+    /* Responsive tweaks */
+    @media (max-width: 900px){ .container{padding:18px 10px} .link-card{ min-width:46%; max-width:48%; padding:20px 12px } .three-dot-wrap{ left:12px } .title-box h1{ font-size:1.8rem } }
+    @media (max-width: 600px){ .link-card{ min-width:98%; max-width:98% } .title-box{ padding: 28px 10px 6px 10px; } .sidebar{ width:86%; left:-100% } .sidebar.open{ left:0 } }
+    *{ scrollbar-width: thin; scrollbar-color: #2c3947 #0f141b }
+    *::-webkit-scrollbar{ width:10px } *::-webkit-scrollbar-track{ background:#0f141b } *::-webkit-scrollbar-thumb{ background:#2c3947; border-radius:10px } *::-webkit-scrollbar-thumb:hover{ background:#36495c }
+  </style>
+</head>
+<body>
+  <div class="title-box" id="floatingTitle" aria-live="polite">
+    <h1>STUDY MORE AS YOU CAN</h1>
+
+    <!-- three-dot and open-sidebar controls (left side) -->
+    <div class="three-dot-wrap" aria-hidden="false">
+      <button id="openSidebarBtn" class="open-sidebar" title="Open sidebar">☰ <span style="font-size:13px">MENU</span></button>
+
+      <button id="threeDotBtn" class="dot-btn" aria-expanded="false" aria-controls="threeDotDropdown" title="More options">⋮</button>
+
+      <nav id="threeDotDropdown" class="dropdown" aria-hidden="true" role="menu">
+        <a role="menuitem" href="#top" onclick="closeSidebarFromMenu()">Top</a>
+        <a role="menuitem" href="#grid" onclick="closeSidebarFromMenu()">All Links</a>
+        <a role="menuitem" href="mailto:youremail@example.com" target="_blank">Email Us</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="container" id="grid">
+    <div class="grid">
+      
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/117" target="_blank">Lecture-1</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/118" target="_blank">Lecture-2</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/119" target="_blank">Lecture-3</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/120" target="_blank">Lecture-4</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/121" target="_blank">Lecture-5</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/122" target="_blank">Lecture-6</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/123" target="_blank">Lecture-7</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/124" target="_blank">Lecture-8</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/125" target="_blank">Lecture-9</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/126" target="_blank">Lecture-10</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/127" target="_blank">Lecture-11</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/128" target="_blank">Lecture-12</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/129" target="_blank">Lecture-13</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/130" target="_blank">Lecture-14</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/131" target="_blank">Lecture-15</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/132" target="_blank">Lecture-16</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/133" target="_blank">Lecture-17</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/134" target="_blank">Lecture-18</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/135" target="_blank">Lecture-19</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/136" target="_blank">Lecture-20</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/137" target="_blank">Lecture-21</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/138" target="_blank">Lecture-22</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/139" target="_blank">Lecture-23</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/140" target="_blank">Lecture-24</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/141" target="_blank">Lecture-25</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/142" target="_blank">Lecture-26</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/143" target="_blank">Lecture-27</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/144" target="_blank">Lecture-28</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/145" target="_blank">Lecture-29</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/146" target="_blank">Lecture-30</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/147" target="_blank">Lecture-31</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/148" target="_blank">Lecture-32</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/149" target="_blank">Lecture-33</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/150" target="_blank">Lecture-34</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/151" target="_blank">Lecture-35</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/152" target="_blank">Lecture-36</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/153" target="_blank">Lecture-37</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/154" target="_blank">Lecture-38</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/155" target="_blank">Lecture-39</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/156" target="_blank">Lecture-40</a></div>
+      
+    </div>
+  </div>
+
+  <!-- Sidebar (12 clickable blocks) -->
+  <!-- <aside id="sidebar" class="sidebar" aria-hidden="true" aria-label="Quick links">
+    <h3>Quick Links</h3>
+
+    <div class="s-block"><a href="Songs.html" target="_blank">Songs</a></div>
+    <div class="s-block"><a href="https://youtube.com/playlist?list=PLELk3kAcynz7KmaoxPVTKYVGxjmDzx-iv" target="_blank">BBSir Tax</a></div>
+    <div class="s-block"><a href="https://www.youtube.com/watch?v=RPGfW2Q6VD0" target="_blank">CA Amit Mahajan GST Marathon</a></div>
+    <div class="s-block"><a href="https://www.youtube.com/playlist?list=PLL_LKXPxsGy0bp5MiOE9sSTH8usFjDNO7" target="_blank">LAW CAPSULE REVISION</a></div>
+
+    <div class="s-block"><a href="https://www.youtube.com/watch?v=EAWOOw8XcO0" target="_blank">Corporate Laws</a></div>
+    <div class="s-block"><a href="https://www.youtube.com/playlist?list=PLL_LKXPxsGy0HtMkXzdnb6RClI1LJ8Z_q" target="_blank">AUDIT CAPSULE REVISION</a></div>
+    <div class="s-block"><a href="https://t.me/c/2718816646/3/117" target="_blank">Costing</a></div>
+    <div class="s-block"><a href="https://t.me/c/2718816646/5/159" target="_blank">Financial Management</a></div> -->
+
+    <!-- <div class="s-block"><a href="Listed-Soon.html" target="_blank">Coming Soon - 1</a></div>
+    <div class="s-block"><a href="Listed-Soon.html" target="_blank">Coming Soon - 2</a></div>
+    <div class="s-block"><a href="Listed-Soon.html" target="_blank">Coming Soon - 3</a></div>
+    <div class="s-block"><a href="https://youtube.com/playlist?list=PLsEeV2cKmTt5xwh_UEjR-F3m3e6mQF056" target="_blank">SM Marathon</a></div>
+  </aside> -->
+
+  <div id="overlay" class="overlay" tabindex="-1" aria-hidden="true"></div>
+
+  <script>
+    // three-dot dropdown
+    const threeDotBtn = document.getElementById('threeDotBtn');
+    const threeDotDropdown = document.getElementById('threeDotDropdown');
+
+    threeDotBtn.addEventListener('click', (e) => {
+      const isOpen = threeDotDropdown.style.display === 'flex';
+      threeDotDropdown.style.display = isOpen ? 'none' : 'flex';
+      threeDotBtn.setAttribute('aria-expanded', !isOpen);
+      threeDotDropdown.setAttribute('aria-hidden', isOpen);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!threeDotBtn.contains(e.target) && !threeDotDropdown.contains(e.target)) {
+        threeDotDropdown.style.display = 'none';
+        threeDotBtn.setAttribute('aria-expanded', false);
+        threeDotDropdown.setAttribute('aria-hidden', true);
+      }
+    });
+
+    // sidebar open/close (left side)
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const openSidebarBtn = document.getElementById('openSidebarBtn');
+
+    function openSidebar(){
+      sidebar.classList.add('open');
+      overlay.classList.add('show');
+      overlay.style.display = 'block';
+      sidebar.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeSidebar(){
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+      overlay.style.display = 'none';
+      sidebar.setAttribute('aria-hidden', 'true');
+    }
+
+    openSidebarBtn.addEventListener('click', openSidebar);
+    overlay.addEventListener('click', closeSidebar);
+
+    // helper so top menu links can close sidebar if needed
+    function closeSidebarFromMenu(){ closeSidebar(); }
+
+    // keyboard accessible: close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        threeDotDropdown.style.display = 'none';
+        closeSidebar();
+      }
+    });
+
+    // enhance clickable .link-card to open the link if clicked anywhere on card
+    document.querySelectorAll('.link-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        const a = card.querySelector('a.redirect-link');
+        if (a && e.target.tagName.toLowerCase() !== 'a' && !a.contains(e.target)) {
+          window.open(a.href, '_blank');
+        }
+      });
+    });
+
+    /* ---------- AUTO-HIDE TITLE ON SCROLL ---------- */
+    (function(){
+      const title = document.getElementById('floatingTitle');
+      let lastScroll = window.scrollY;
+      let ticking = false;
+      const THRESHOLD = 30;
+
+      function onScroll() {
+        const current = window.scrollY;
+        const delta = current - lastScroll;
+        if (Math.abs(delta) < 8) return;
+
+        if (current > lastScroll && current > THRESHOLD) {
+          if (!title.classList.contains('title-hidden')) title.classList.add('title-hidden');
+        } else {
+          if (title.classList.contains('title-hidden')) title.classList.remove('title-hidden');
+        }
+        lastScroll = current <= 0 ? 0 : current;
+      }
+
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            onScroll();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }, { passive: true });
+    })();
+  </script>
+</body>
