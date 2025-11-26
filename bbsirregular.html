@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Study More As You Can</title>
+  <style>
+    :root{
+      --bg-1:#0b0d10;
+      --bg-2:#111318;
+      --card-1:#1a1f27;
+      --card-2:#191d22;
+      --text:#e7eef7;
+      --muted:#a6c3de;
+      --accent:#ff0000; /* YouTube Red */
+      --accent-2:#cc0000;
+      --shadow:0 10px 40px rgba(0,0,0,.35);
+    }
+
+    /* Global dark theme */
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", Arial;
+      color:var(--text);
+      background: linear-gradient(180deg, var(--bg-1), var(--bg-2));
+      background-attachment: fixed;
+      overflow-y: overlay;
+    }
+
+    /* Subtle glassy container */
+    .container{
+      max-width: 1200px;
+      margin: 48px auto;
+      padding: 32px;
+      background: color-mix(in oklab, var(--bg-2), #0d1015 30%);
+      border: 1px solid rgba(255,255,255,.06);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Title block with three-dot and sidebar button */
+    .title-box{
+      text-align: center;
+      padding: 48px 20px 8px 20px;
+      cursor: default;
+      user-select: none;
+      position: relative;
+      margin-bottom: 18px;
+      transition: transform .36s cubic-bezier(.2,.9,.2,1), opacity .36s ease;
+      will-change: transform, opacity;
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+      backdrop-filter: blur(4px);
+    }
+    /* hidden state (when scrolled down) */
+    .title-box.title-hidden{
+      transform: translateY(-120%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .title-box h1{
+      margin: 0;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text);
+      white-space: nowrap;
+      letter-spacing: 1px;
+    }
+
+    /* three-dot and menu button position (left side now) */
+    .three-dot-wrap{
+      position: absolute;
+      left: 24px;
+      top: 18px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .dot-btn{
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.04);
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 20px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .dot-btn:hover{ color: #fff; border-color: rgba(255,255,255,0.08) }
+
+    /* visible sidebar toggle button (hamburger text) */
+    .open-sidebar {
+      background: linear-gradient(180deg,var(--accent-2),var(--accent));
+      border: none;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      font-size:14px;
+    }
+
+    /* dropdown */
+    .dropdown{
+      position: absolute;
+      left: 0;
+      top: calc(100% + 12px);
+      width: 200px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.04);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+      display:none;
+      flex-direction: column;
+      overflow:hidden;
+      z-index: 50;
+    }
+    .dropdown a{
+      padding:10px 12px;
+      text-decoration:none;
+      color:var(--muted);
+      font-weight:600;
+      border-bottom:1px solid rgba(255,255,255,0.02);
+      display:flex; align-items:center; gap:10px;
+    }
+    .dropdown a:last-child{ border-bottom: none }
+    .dropdown a:hover{ background: rgba(255,255,255,0.02); color:#fff }
+
+    /* Grid of cards */
+    .grid{
+      display:flex; flex-wrap:wrap; gap:22px; justify-content:center;
+    }
+    .link-card{
+      background: linear-gradient(130deg, var(--card-1), var(--card-2) 80%);
+      flex: 1 0 28%;
+      min-width: 250px; max-width: 31%;
+      padding: 28px 20px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.06);
+      box-shadow: 0 6px 22px rgba(0,0,0,.35);
+      display:flex; align-items:center; justify-content:center;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .25s ease, box-shadow .24s ease;
+    }
+    .link-card:hover{
+      transform: translateY(-6px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+      z-index:1;
+    }
+
+    .redirect-link{
+      text-decoration:none; color: var(--muted);
+      font-size: 1.12rem; font-weight: 650; letter-spacing:.4px;
+      display:flex; align-items:center; gap:12px; position:relative;
+    }
+    .link-card:hover .redirect-link{ color:#fff }
+
+    /* Sidebar panel (left side) */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -340px; /* hidden by default on left */
+      width: 320px;
+      height: 100%;
+      background: linear-gradient(180deg, rgba(17,19,22,0.98), rgba(10,12,15,0.98));
+      border-right: 1px solid rgba(255,255,255,0.03);
+      box-shadow: 8px 0 40px rgba(0,0,0,0.6);
+      transition: left 300ms cubic-bezier(.2,.9,.2,1);
+      padding: 22px;
+      z-index: 60;
+      overflow-y:auto;
+    }
+    .sidebar.open { left: 0 }
+
+    .sidebar h3 { margin: 0 0 12px 0; color: var(--accent); text-align:center; font-size:18px }
+
+    .s-block {
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.006));
+      padding: 12px 10px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      border: 1px solid rgba(255,255,255,0.02);
+      display:flex; align-items:center; gap:10px;
+      transition: transform .12s ease, box-shadow .12s ease;
+    }
+    .s-block a{ text-decoration:none; color:var(--muted); font-weight:700; display:block; width:100% }
+    .s-block:hover{ transform: translateY(-4px); box-shadow: 0 8px 22px rgba(0,0,0,0.5); color:#fff }
+
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none;
+      z-index: 55;
+    }
+    .overlay.show { display:block }
+
+    /* Responsive tweaks */
+    @media (max-width: 900px){ .container{padding:18px 10px} .link-card{ min-width:46%; max-width:48%; padding:20px 12px } .three-dot-wrap{ left:12px } .title-box h1{ font-size:1.8rem } }
+    @media (max-width: 600px){ .link-card{ min-width:98%; max-width:98% } .title-box{ padding: 28px 10px 6px 10px; } .sidebar{ width:86%; left:-100% } .sidebar.open{ left:0 } }
+    *{ scrollbar-width: thin; scrollbar-color: #2c3947 #0f141b }
+    *::-webkit-scrollbar{ width:10px } *::-webkit-scrollbar-track{ background:#0f141b } *::-webkit-scrollbar-thumb{ background:#2c3947; border-radius:10px } *::-webkit-scrollbar-thumb:hover{ background:#36495c }
+  </style>
+</head>
+<body>
+  <div class="title-box" id="floatingTitle" aria-live="polite">
+    <h1>STUDY MORE AS YOU CAN</h1>
+
+    <!-- three-dot and open-sidebar controls (left side) -->
+    <div class="three-dot-wrap" aria-hidden="false">
+      <button id="openSidebarBtn" class="open-sidebar" title="Open sidebar">☰ <span style="font-size:13px">MENU</span></button>
+
+      <button id="threeDotBtn" class="dot-btn" aria-expanded="false" aria-controls="threeDotDropdown" title="More options">⋮</button>
+
+      <nav id="threeDotDropdown" class="dropdown" aria-hidden="true" role="menu">
+        <a role="menuitem" href="#top" onclick="closeSidebarFromMenu()">Top</a>
+        <a role="menuitem" href="#grid" onclick="closeSidebarFromMenu()">All Links</a>
+        <a role="menuitem" href="mailto:youremail@example.com" target="_blank">Email Us</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="container" id="grid">
+    <div class="grid">
+      
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1440" target="_blank">Inter Day-11 Part-1 House Property</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1441" target="_blank">Inter Day-11 Part-2 House Property</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1442" target="_blank">Inter Day-12 Part-1 House Property</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1443" target="_blank">Inter Day-12 Part-2 Capital Gain</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1444" target="_blank">Inter Day-13 Part-1 Capital Gain</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1445" target="_blank">Inter Day-13 Part-2 Capital Gain</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1446" target="_blank">Inter Day-14 Part-1 Capital Gain</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1447" target="_blank">Inter Day-14 Part-2 Capital Gain</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1448" target="_blank">Inter Day-15 Part-1 Capital Gain</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1449" target="_blank">Inter Day-15 Part-2 Capital Gain</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1450" target="_blank">Inter Day-16 Part-1 Capital Gain</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1451" target="_blank">Inter Day-16 Part-2 Capital Gain</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1452" target="_blank">Inter Day-17 Part-1 Capital Gain</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1453" target="_blank">Inter Day-17 Part-2 Capital Gain</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1454" target="_blank">Inter Day-18 Capital Gain</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1455" target="_blank">Inter Day-19 Part-1 Capital Gain</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1456" target="_blank">Inter Day-19 Part-2 Capital Gain</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1457" target="_blank">Inter Day-20 Part-1 Capital Gain</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1458" target="_blank">Inter Day-20 Part-2 Capital Gain</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1459" target="_blank">Inter Day-21 Part-1 Capital Gain</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1460" target="_blank">Inter Day-21 Part-2 Capital Gain</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1461" target="_blank">Inter Day-22 Part-1 Capital Gain</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1462" target="_blank">Inter Day-22 Part-2 Capital Gain</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1463" target="_blank">Inter Day-23 Part-1 Capital Gain</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1464" target="_blank">Inter Day-23 Part-2 Capital Gain</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1465" target="_blank">Inter Day-24 Part-1 Scope Of Total Income</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1466" target="_blank">Inter Day-24 Part-2 Scope Of Total Income</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1467" target="_blank">Inter Day-25 Part-1 Scope Of Total Income</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1468" target="_blank">Inter Day-25 Part-2 Scope Of Total Income</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1469" target="_blank">Inter Day-26 Part-1 Scope Of Total Income</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1470" target="_blank">Inter Day-26 Part-2 TEST PAPER MCQ-3 DISCUSSION</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1471" target="_blank">Inter Day-27 Part-1 Income From Other Sources</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1472" target="_blank">Inter Day-27 Part-2 Income From Other Sources</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1473" target="_blank">Inter Day-28 Part-1 Income From Other Sources</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1474" target="_blank">Inter Day-28 Part-2 Income From Other Sources</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1475" target="_blank">Inter Day-29 Part-1 Amalgamation &amp; Demerger</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1476" target="_blank">Inter Day-29 Part-2 Buyback &amp; Liquidation</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1477" target="_blank">Inter Day-30 IFOS Last Lecture</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1478" target="_blank">Inter Day-31 Part-1 Clubbing of Income</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1479" target="_blank">Inter Day-31 Part-2 Clubbing of Income</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1480" target="_blank">Inter Day-32 Part-1 PGBP</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1481" target="_blank">Inter Day-32 Part-2 PGBP</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1482" target="_blank">Inter Day-33 Part-1 PGBP</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1483" target="_blank">Inter Day-33 Part-2 PGBP</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1484" target="_blank">Inter Day-34 Part-1 PGBP</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1485" target="_blank">Inter Day-34 Part-2 PGBP</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1486" target="_blank">Inter Day-35 Part-1 PGBP</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1487" target="_blank">Inter Day-35 Part-2 PGBP</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1488" target="_blank">Inter Day-36  Part-1 PGBP</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1489" target="_blank">Inter Day-36 Part-2 PGBP</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1490" target="_blank">Inter Day-37 Part-1 PGBP</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1491" target="_blank">Inter Day-37 Part-2 PGBP</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1492" target="_blank">Inter Day-38 Part-1 PGBP</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1493" target="_blank">Inter Day-38 Part-2 PGBP</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1494" target="_blank">Inter Day-39 Part-1 PGBP</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1495" target="_blank">Inter Day-39 Part-2 PGBP</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1496" target="_blank">Inter Day-40 Part-1 PGBP</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1497" target="_blank">Inter Day-40 Part-2 PGBP</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1498" target="_blank">Inter Day-41 Part-1 PGBP</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1499" target="_blank">Inter Day-41 Part-2 PGBP</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1500" target="_blank">Inter Day-42 Part-1 PGBP</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1501" target="_blank">Inter Day-42 Part-2 SET OFF CF</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1502" target="_blank">Inter Day-43 Part-1 SET OFF CF</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1503" target="_blank">Inter Day-43 Part-2 SET OFF CF</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1504" target="_blank">Inter Day-44 Part-1 SET OFF CF</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1505" target="_blank">Inter Day-44 Part-2 SALARY</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1506" target="_blank">Inter Day-45 Part-1 SALARY</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1507" target="_blank">Inter Day-45 Part-2 SALARY</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1508" target="_blank">Inter Day-46 Part-1 SALARY</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1509" target="_blank">Inter Day-46 Part-2 SALARY</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1510" target="_blank">Inter Day-47 Part-1 SALARY</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1511" target="_blank">Inter Day-47 Part-2 SALARY</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1512" target="_blank">Inter Day-48 Part-1 SALARY</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1513" target="_blank">Inter Day-48 Part-2 SALARY</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1514" target="_blank">Inter Day-49 Part-1 SALARY</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1515" target="_blank">Inter Day-49 Part-2 SALARY</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1516" target="_blank">Inter Day-50 Part-1 SALARY</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1517" target="_blank">Inter Day-50 Part-2 Deducation U/C VI-A</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1518" target="_blank">Inter Day-51 Part-1 Deducation U/C VI-A</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1519" target="_blank">Inter Day-51 Part-2 Deducation U/C VI-A</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1520" target="_blank">Inter Day-51 Part-3 Deducation U/C VI-A</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1521" target="_blank">Inter Day-52 Part-1 Deducation U/C VI-A</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1522" target="_blank">Inter Day-52 Part-2 Deducation U/C VI-A</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1523" target="_blank">Inter Day-53 Part-1 115BAC</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1524" target="_blank">Inter Day-53 Part-2 AMT</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1525" target="_blank">Inter Day-54 Part-1 ADV TAX</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1526" target="_blank">Inter Day-54 Part-2 ADV TAX</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1527" target="_blank">INTER DAY-55 RETURN FILING SELF ASSESSMENT</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1528" target="_blank">INTER DAY-56 RETURN FILING SELF ASSESSMENT</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1529" target="_blank">INTER DAY-57 Part-1 TDS/TCS</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1530" target="_blank">INTER DAY-57 Part-2 TDS/TCS</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1531" target="_blank">INTER DAY-58 PART-1</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1532" target="_blank">INTER DAY-58 PART-2</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1533" target="_blank">INTER DAY- 59 PART-1 TDS/TCS</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1534" target="_blank">INTER DAY- 59 PART-2 TDS/TCS</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1535" target="_blank">INTER DAY- 60 PART-1 TDS/TCS</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1536" target="_blank">INTER DAY- 60 PART-2 TDS/TCS</a></div>
+
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1537" target="_blank">INTER DAY- 61 PART-1 REMAINING PARTS</a></div>
+<div class="link-card"><a class="redirect-link" href="https://t.me/c/2333226199/1431/1538" target="_blank">INTER DAY- 61 PART-2 REMAINING PARTS</a></div>
+
+      
+    </div>
+  </div>
+
+  <!-- Sidebar (12 clickable blocks) -->
+  <!-- <aside id="sidebar" class="sidebar" aria-hidden="true" aria-label="Quick links">
+    <h3>Quick Links</h3>
+
+    <div class="s-block"><a href="Songs.html" target="_blank">Songs</a></div>
+    <div class="s-block"><a href="https://youtube.com/playlist?list=PLELk3kAcynz7KmaoxPVTKYVGxjmDzx-iv" target="_blank">BBSir Tax</a></div>
+    <div class="s-block"><a href="https://www.youtube.com/watch?v=RPGfW2Q6VD0" target="_blank">CA Amit Mahajan GST Marathon</a></div>
+    <div class="s-block"><a href="https://www.youtube.com/playlist?list=PLL_LKXPxsGy0bp5MiOE9sSTH8usFjDNO7" target="_blank">LAW CAPSULE REVISION</a></div>
+
+    <div class="s-block"><a href="https://www.youtube.com/watch?v=EAWOOw8XcO0" target="_blank">Corporate Laws</a></div>
+    <div class="s-block"><a href="https://www.youtube.com/playlist?list=PLL_LKXPxsGy0HtMkXzdnb6RClI1LJ8Z_q" target="_blank">AUDIT CAPSULE REVISION</a></div>
+    <div class="s-block"><a href="https://t.me/c/2718816646/3/117" target="_blank">Costing</a></div>
+    <div class="s-block"><a href="https://t.me/c/2718816646/5/159" target="_blank">Financial Management</a></div> -->
+
+    <!-- <div class="s-block"><a href="Listed-Soon.html" target="_blank">Coming Soon - 1</a></div>
+    <div class="s-block"><a href="Listed-Soon.html" target="_blank">Coming Soon - 2</a></div>
+    <div class="s-block"><a href="Listed-Soon.html" target="_blank">Coming Soon - 3</a></div>
+    <div class="s-block"><a href="https://youtube.com/playlist?list=PLsEeV2cKmTt5xwh_UEjR-F3m3e6mQF056" target="_blank">SM Marathon</a></div>
+  </aside> -->
+
+  <div id="overlay" class="overlay" tabindex="-1" aria-hidden="true"></div>
+
+  <script>
+    // three-dot dropdown
+    const threeDotBtn = document.getElementById('threeDotBtn');
+    const threeDotDropdown = document.getElementById('threeDotDropdown');
+
+    threeDotBtn.addEventListener('click', (e) => {
+      const isOpen = threeDotDropdown.style.display === 'flex';
+      threeDotDropdown.style.display = isOpen ? 'none' : 'flex';
+      threeDotBtn.setAttribute('aria-expanded', !isOpen);
+      threeDotDropdown.setAttribute('aria-hidden', isOpen);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!threeDotBtn.contains(e.target) && !threeDotDropdown.contains(e.target)) {
+        threeDotDropdown.style.display = 'none';
+        threeDotBtn.setAttribute('aria-expanded', false);
+        threeDotDropdown.setAttribute('aria-hidden', true);
+      }
+    });
+
+    // sidebar open/close (left side)
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const openSidebarBtn = document.getElementById('openSidebarBtn');
+
+    function openSidebar(){
+      sidebar.classList.add('open');
+      overlay.classList.add('show');
+      overlay.style.display = 'block';
+      sidebar.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeSidebar(){
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+      overlay.style.display = 'none';
+      sidebar.setAttribute('aria-hidden', 'true');
+    }
+
+    openSidebarBtn.addEventListener('click', openSidebar);
+    overlay.addEventListener('click', closeSidebar);
+
+    // helper so top menu links can close sidebar if needed
+    function closeSidebarFromMenu(){ closeSidebar(); }
+
+    // keyboard accessible: close on Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        threeDotDropdown.style.display = 'none';
+        closeSidebar();
+      }
+    });
+
+    // enhance clickable .link-card to open the link if clicked anywhere on card
+    document.querySelectorAll('.link-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        const a = card.querySelector('a.redirect-link');
+        if (a && e.target.tagName.toLowerCase() !== 'a' && !a.contains(e.target)) {
+          window.open(a.href, '_blank');
+        }
+      });
+    });
+
+    /* ---------- AUTO-HIDE TITLE ON SCROLL ---------- */
+    (function(){
+      const title = document.getElementById('floatingTitle');
+      let lastScroll = window.scrollY;
+      let ticking = false;
+      const THRESHOLD = 30;
+
+      function onScroll() {
+        const current = window.scrollY;
+        const delta = current - lastScroll;
+        if (Math.abs(delta) < 8) return;
+
+        if (current > lastScroll && current > THRESHOLD) {
+          if (!title.classList.contains('title-hidden')) title.classList.add('title-hidden');
+        } else {
+          if (title.classList.contains('title-hidden')) title.classList.remove('title-hidden');
+        }
+        lastScroll = current <= 0 ? 0 : current;
+      }
+
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          window.requestAnimationFrame(() => {
+            onScroll();
+            ticking = false;
+          });
+          ticking = true;
+        }
+      }, { passive: true });
+    })();
+  </script>
+</body>
