@@ -291,6 +291,37 @@
       font-weight: 600;
     }
 
+        .lecture-backup-buttons {
+      display: inline-flex;
+      gap: 8px;
+      margin-left: auto;
+    }
+
+    .lecture-backup-buttons button {
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(0,0,0,0.7);
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      outline: none;
+      backdrop-filter: blur(4px);
+    }
+
+    .lecture-backup-buttons button:hover {
+      border-color: rgba(255,255,255,0.2);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .lecture-backup-buttons button:active {
+      transform: translateY(0);
+      opacity: 0.85;
+    }
+
+
     /* Responsive tweaks */
     @media (max-width: 900px){ .container{padding:18px 10px} .link-card{ min-width:46%; max-width:48%; padding:20px 12px } .three-dot-wrap{ left:12px } .title-box h1{ font-size:1.8rem } }
     @media (max-width: 600px){ .link-card{ min-width:98%; max-width:98% } .title-box{ padding: 28px 10px 6px 10px; } .sidebar{ width:86%; left:-100% } .sidebar.open{ left:0 } }
@@ -316,7 +347,7 @@
     </div>
   </div>
 
-  <div class="container" id="grid">
+   <div class="container" id="grid">
 
     <!-- Lecture filter bar -->
     <div class="lecture-filter-bar">
@@ -324,10 +355,16 @@
         <input type="checkbox" id="showOnlyUnfinishedCheckbox">
         <span>Show only unfinished lectures</span>
       </label>
+
+      <div class="lecture-backup-buttons">
+        <button id="exportProgressBtn" type="button">Export</button>
+        <button id="importProgressBtn" type="button">Import</button>
+        <input type="file" id="importProgressFile" accept="application/json" style="display:none">
+      </div>
     </div>
 
-    
     <div class="grid">
+
       
       <div class="link-card"><a class="redirect-link" href="https://youtube.com/playlist?list=PLPDwEzd9zZzDVTZ9n7vz56psssUHQn3aw" target="_blank">CA Nishant Tax & Gst</a></div>
       <div class="link-card"><a class="redirect-link" href="https://youtube.com/playlist?list=PLELk3kAcynz7KmaoxPVTKYVGxjmDzx-iv" target="_blank">BBSir Tax</a></div>
@@ -586,6 +623,125 @@
         initAll();
       }
     })();
+
+        /* ---------- LECTURE EXPORT / IMPORT (JSON FILE) ---------- */
+    (function () {
+      // Must match the keys used in the other script
+      const STORAGE_PREFIX = 'lecture_completed_v1_';
+      const FILTER_KEY = 'lecture_filter_mode_v1';
+
+      function collectProgress() {
+        const completedLectures = {};
+
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith(STORAGE_PREFIX)) {
+            completedLectures[key] = localStorage.getItem(key);
+          }
+        }
+
+        const filterMode = localStorage.getItem(FILTER_KEY) || 'all';
+
+        return {
+          version: 1,
+          generatedAt: new Date().toISOString(),
+          completedLectures,
+          filterMode
+        };
+      }
+
+      function exportProgress() {
+        const data = collectProgress();
+        const json = JSON.stringify(data, null, 2);
+
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+
+        const dateStr = new Date().toISOString().slice(0, 10);
+        a.href = url;
+        a.download = `study-progress-${dateStr}.json`;
+
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function importProgressFile(file) {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          try {
+            const content = e.target.result;
+            const data = JSON.parse(content);
+
+            if (!data || typeof data !== 'object') {
+              throw new Error('Invalid file format');
+            }
+
+            const completedLectures = data.completedLectures || {};
+            const filterMode = data.filterMode || 'all';
+
+            // Clear old lecture-completed keys
+            for (let i = localStorage.length - 1; i >= 0; i--) {
+              const key = localStorage.key(i);
+              if (key && key.startsWith(STORAGE_PREFIX)) {
+                localStorage.removeItem(key);
+              }
+            }
+
+            // Apply imported lecture-completed keys
+            Object.keys(completedLectures).forEach((key) => {
+              localStorage.setItem(key, completedLectures[key]);
+            });
+
+            // Apply filter mode
+            localStorage.setItem(FILTER_KEY, filterMode);
+
+            alert('Progress imported successfully. The page will now reload.');
+            location.reload();
+          } catch (err) {
+            console.error(err);
+            alert('Could not import this file. Make sure it is a valid progress file exported from this site.');
+          }
+        };
+
+        reader.readAsText(file);
+      }
+
+      function initBackupButtons() {
+        const exportBtn = document.getElementById('exportProgressBtn');
+        const importBtn = document.getElementById('importProgressBtn');
+        const fileInput = document.getElementById('importProgressFile');
+
+        if (!exportBtn || !importBtn || !fileInput) return;
+
+        exportBtn.addEventListener('click', function () {
+          exportProgress();
+        });
+
+        importBtn.addEventListener('click', function () {
+          // Reset and open file picker
+          fileInput.value = '';
+          fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function () {
+          const file = fileInput.files && fileInput.files[0];
+          if (file) {
+            importProgressFile(file);
+          }
+        });
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initBackupButtons);
+      } else {
+        initBackupButtons();
+      }
+    })();
+
 
   </script>
 </body>
