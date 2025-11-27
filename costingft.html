@@ -207,6 +207,90 @@
     }
     .overlay.show { display:block }
 
+          /* ---- Lecture completed toggle ---- */
+    .lecture-done-toggle {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255,255,255,0.15);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+      z-index: 2;
+    }
+
+    .lecture-done-toggle input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+      accent-color: var(--accent);
+    }
+
+    .link-card.lecture-completed {
+      opacity: 0.55;
+      border-color: rgba(0, 255, 120, 0.6);
+      box-shadow: 0 0 0 1px rgba(0, 255, 120, 0.2), 0 6px 18px rgba(0,0,0,0.6);
+    }
+
+    .link-card.lecture-completed .redirect-link {
+      color: #b0ffc8;
+    }
+
+    .link-card.lecture-completed .redirect-link::after {
+      content: "✓ Done";
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-left: 10px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 255, 120, 0.65);
+      background: rgba(0, 40, 10, 0.9);
+      color: #b0ffc8;
+    }
+
+        /* ---- Lecture filter bar ---- */
+    .lecture-filter-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin: 0 0 18px 0;
+      gap: 8px;
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .lecture-filter-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(5,7,10,0.8);
+      cursor: pointer;
+      user-select: none;
+      backdrop-filter: blur(6px);
+    }
+
+    .lecture-filter-toggle input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .lecture-filter-toggle span {
+      font-weight: 600;
+    }
+
     /* Responsive tweaks */
     @media (max-width: 900px){ .container{padding:18px 10px} .link-card{ min-width:46%; max-width:48%; padding:20px 12px } .three-dot-wrap{ left:12px } .title-box h1{ font-size:1.8rem } }
     @media (max-width: 600px){ .link-card{ min-width:98%; max-width:98% } .title-box{ padding: 28px 10px 6px 10px; } .sidebar{ width:86%; left:-100% } .sidebar.open{ left:0 } }
@@ -233,6 +317,16 @@
   </div>
 
   <div class="container" id="grid">
+
+    <!-- Lecture filter bar -->
+    <div class="lecture-filter-bar">
+      <label class="lecture-filter-toggle">
+        <input type="checkbox" id="showOnlyUnfinishedCheckbox">
+        <span>Show only unfinished lectures</span>
+      </label>
+    </div>
+
+    
     <div class="grid">
       
 <div class="link-card"><a class="redirect-link" href="https://t.me/c/2718816646/3/117" target="_blank">Lecture-1</a></div>
@@ -398,5 +492,118 @@
         }
       }, { passive: true });
     })();
+
+        /* ---------- LECTURE COMPLETED + FILTER (LOCALSTORAGE) ---------- */
+    (function () {
+      const STORAGE_PREFIX = 'lecture_completed_v1_';
+      const FILTER_KEY = 'lecture_filter_mode_v1'; // 'all' or 'unfinished'
+      let currentFilterMode = 'all';
+
+      function applyFilter() {
+        const cards = document.querySelectorAll('.link-card');
+        cards.forEach((card) => {
+          // Only hide cards that are explicitly marked completed
+          const isCompleted = card.classList.contains('lecture-completed');
+
+          if (currentFilterMode === 'unfinished' && isCompleted) {
+            card.style.display = 'none';
+          } else {
+            card.style.display = '';
+          }
+        });
+      }
+
+      function initLectureCompletion() {
+        const cards = document.querySelectorAll('.link-card');
+
+        cards.forEach((card) => {
+          const link = card.querySelector('a.redirect-link');
+          if (!link) return;
+
+          // Unique key based on href (stable for each lecture)
+          const key = STORAGE_PREFIX + link.href;
+
+          // Create the toggle UI
+          const label = document.createElement('label');
+          label.className = 'lecture-done-toggle';
+          label.title = 'Mark this lecture as completed';
+
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+
+          const textSpan = document.createElement('span');
+          textSpan.textContent = 'Done';
+
+          label.appendChild(checkbox);
+          label.appendChild(textSpan);
+
+          // Add to the card
+          card.appendChild(label);
+
+          // Restore saved state
+          const saved = localStorage.getItem(key);
+          if (saved === '1') {
+            checkbox.checked = true;
+            card.classList.add('lecture-completed');
+          }
+
+          // Avoid opening the link when clicking the checkbox / label
+          checkbox.addEventListener('click', function (e) {
+            e.stopPropagation();
+          });
+          label.addEventListener('click', function (e) {
+            e.stopPropagation();
+          });
+
+          // Save on change + re-apply filter
+          checkbox.addEventListener('change', function () {
+            if (checkbox.checked) {
+              localStorage.setItem(key, '1');
+              card.classList.add('lecture-completed');
+            } else {
+              localStorage.removeItem(key);
+              card.classList.remove('lecture-completed');
+            }
+            applyFilter();
+          });
+        });
+      }
+
+      function initFilterToggle() {
+        const filterCheckbox = document.getElementById('showOnlyUnfinishedCheckbox');
+        if (!filterCheckbox) return;
+
+        // Restore saved filter mode
+        const savedMode = localStorage.getItem(FILTER_KEY);
+        if (savedMode === 'unfinished') {
+          currentFilterMode = 'unfinished';
+          filterCheckbox.checked = true;
+        } else {
+          currentFilterMode = 'all';
+          filterCheckbox.checked = false;
+        }
+
+        applyFilter();
+
+        filterCheckbox.addEventListener('change', function () {
+          currentFilterMode = filterCheckbox.checked ? 'unfinished' : 'all';
+          localStorage.setItem(FILTER_KEY, currentFilterMode);
+          applyFilter();
+        });
+      }
+
+      function initAll() {
+        initLectureCompletion();
+        initFilterToggle();
+        applyFilter();
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAll);
+      } else {
+        initAll();
+      }
+    })();
+
   </script>
 </body>
